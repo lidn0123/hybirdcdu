@@ -6,7 +6,6 @@ Attributes:
 """
 import os
 import win32com.client as win32
-# from pbr_props import PbrStatus
 
 aspen = win32.Dispatch('Apwn.Document')
 print("--- loading aspen .bkp file ---")
