@@ -7,12 +7,27 @@ Attributes:
 import os
 import win32com.client as win32
 
+project_path = os.path.abspath('../')
+model_folder = 'simulation\hbcdumodel'
+model_name = 'CDU-basic.apw'
+
 aspen = win32.Dispatch('Apwn.Document')
 print("--- loading aspen .bkp file ---")
-print('Simulation path: ', os.path.join(os.path.dirname(__file__), 'hbcdumodel/CDU-basic.bkp')
-aspen.InitFromArchive2(os.path.join(os.path.dirname(__file__), 'hbcdumodel/CDU-basic.bkp'))
+print('Simulation path: ', os.path.join(project_path, model_folder, model_name))
+aspen.InitFromArchive2(os.path.join(project_path, model_folder, model_name))
 print("--- .bkp file loaded---")
+aspen.Visible = True
+print('If file open falied, please open it manually')
+print('File open? Y/N?')
+file_statue = input()
+if file_statue in ['Y', 'y']:
+    aspen.Activate()
 
+else:
+    print('---Close Aspen File---')
+    aspen.Close()
+    aspen.Quit()
+    del aspen
 
 
 def run(temperature, pressure, buoh_flow_in, acac_flow_in):
@@ -36,7 +51,8 @@ def run(temperature, pressure, buoh_flow_in, acac_flow_in):
         print("\n--- runnning simulation---")
         aspen.Engine.Run2()
         print("--- simulation finished---")
-        catalyst_weight = aspen.Application.Tree.FindNode("\Data\Flowsheeting Options\Design-Spec\PBRWT\Output\FINAL_VAL\\1").Value
+        catalyst_weight = aspen.Application.Tree.FindNode(
+            "\Data\Flowsheeting Options\Design-Spec\PBRWT\Output\FINAL_VAL\\1").Value
         buoh_flow_out = aspen.Tree.FindNode("\Data\Streams\OUTPUT\Output\MOLEFLOW\MIXED\BUTANOL").Value
         water_flow_out = aspen.Tree.FindNode("\Data\Streams\OUTPUT\Output\MOLEFLOW\MIXED\AGUA").Value
         acac_flow_out = aspen.Tree.FindNode("\Data\Streams\OUTPUT\Output\MOLEFLOW\MIXED\ACACETIC").Value
@@ -51,7 +67,7 @@ def run(temperature, pressure, buoh_flow_in, acac_flow_in):
         print("buoh_flow_in : %s" % buoh_flow_in)
         print("acac_flow_in : %s" % acac_flow_in)
 
-    return response
+    # return response
 
 
 def close_aspen():
